@@ -10328,33 +10328,27 @@ var createElement = function createElement(tag, className) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _timer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./timer */ "./src/js/timer/index.js");
-/* harmony import */ var _common_const__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/const */ "./src/js/common/const.js");
-/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common/utils */ "./src/js/common/utils.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+/* harmony import */ var _scripts_ListItem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scripts/ListItem */ "./src/js/scripts/ListItem.js");
+/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/utils */ "./src/js/common/utils.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
-
- // import Subject from './scripts/subject';
 
 var messageInput = document.getElementById('message-input');
 var timeOptionInput = document.getElementById('message-time-option');
 var addMessageBtn = document.getElementById('message-add-btn');
 var listContainer = document.getElementById('message-list-container');
 addMessageBtn.onclick = addNew;
+var id = 0;
 
 function addNew() {
   if (messageInput.value.trim().length <= 3) {
     alert('3자이상 입력해 주세요');
   } else {
-    var li = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('li');
-    var list = new ListItem({
+    id++;
+    var li = Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["createElement"])('li');
+    li.id = id;
+    var list = new _scripts_ListItem__WEBPACK_IMPORTED_MODULE_0__["default"]({
       elem: li,
       title: messageInput.value,
       time: timeOptionInput.value
@@ -10372,7 +10366,49 @@ var Observer = function Observer() {
   _classCallCheck(this, Observer);
 
   this.update = function () {};
-};
+}; // create an observer instance
+
+
+var observer = new MutationObserver(function (mutations) {
+  mutations.forEach(function (mutation) {
+    console.log(mutation);
+  });
+}); // configuration of the observer:
+
+var config = {
+  attributes: true,
+  childList: true,
+  characterData: true
+}; // pass in the target node, as well as the observer options
+
+observer.observe(listContainer, config);
+
+/***/ }),
+
+/***/ "./src/js/scripts/ListItem.js":
+/*!************************************!*\
+  !*** ./src/js/scripts/ListItem.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ListItem; });
+/* harmony import */ var _timer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../timer */ "./src/js/timer/index.js");
+/* harmony import */ var _common_const__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/const */ "./src/js/common/const.js");
+/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/utils */ "./src/js/common/utils.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
 
 var ListItem = function ListItem(props) {
   var _this = this;
@@ -10407,8 +10443,13 @@ var ListItem = function ListItem(props) {
     // localEventListener 삭제X
 
     console.log(_this.props.timer.timer);
-    clearInterval(_this.props.timer.timer);
+    clearInterval(_this.props.timer.timer); // this.elem
+
     _this.props.timer = null;
+
+    _this.elem.classList.add('destroy');
+
+    console.log(_this.elem);
     console.log('타이머가 끝남', _this.props);
   });
 
@@ -10439,11 +10480,19 @@ var ListItem = function ListItem(props) {
 
     _this.createTimeOption(decreseSelect, _common_const__WEBPACK_IMPORTED_MODULE_1__["DecreseTimeOption"]);
 
+    var deleteButton = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('button', 'delete-button');
+    deleteButton.name = 'delete';
+
+    deleteButton.onclick = function () {
+      return _this.destroy();
+    };
+
     return {
       increseSelect: increseSelect,
       increseButton: increseButton,
       decreseSelect: decreseSelect,
-      decreseButton: decreseButton
+      decreseButton: decreseButton,
+      deleteButton: deleteButton
     };
   });
 
@@ -10468,7 +10517,8 @@ var ListItem = function ListItem(props) {
         increseSelect = _this$renderInnerNode.increseSelect,
         increseButton = _this$renderInnerNode.increseButton,
         decreseSelect = _this$renderInnerNode.decreseSelect,
-        decreseButton = _this$renderInnerNode.decreseButton; //
+        decreseButton = _this$renderInnerNode.decreseButton,
+        deleteButton = _this$renderInnerNode.deleteButton; //
 
 
     increseButton.onclick = function (e) {
@@ -10479,7 +10529,7 @@ var ListItem = function ListItem(props) {
       return _this.controlTime(decreseSelect.value, e.target.name);
     };
 
-    _this.elem.append(p, increseSelect, increseButton, decreseSelect, decreseButton);
+    _this.elem.append(p, increseSelect, increseButton, decreseSelect, decreseButton, deleteButton);
 
     return _this.elem;
   });
@@ -10491,6 +10541,8 @@ var ListItem = function ListItem(props) {
   });
   console.log(this);
 };
+
+
 
 /***/ }),
 
