@@ -34,13 +34,10 @@ export default class ListItem {
     // 인스턴스 변수 = null
     // dom 삭제
     // localEventListener 삭제X
-    console.log(this.props.timer.timer);
     clearInterval(this.props.timer.timer);
-    // this.elem
     this.props.timer = null;
     this.elem.classList.add('destroy');
-    console.log(this.elem);
-    console.log('타이머가 끝남', this.props);
+    console.log('타이머가 끝남');
   };
 
   initTimer = () => {

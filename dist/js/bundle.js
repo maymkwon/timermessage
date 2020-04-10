@@ -10442,15 +10442,12 @@ var ListItem = function ListItem(props) {
     // dom 삭제
     // localEventListener 삭제X
 
-    console.log(_this.props.timer.timer);
-    clearInterval(_this.props.timer.timer); // this.elem
-
+    clearInterval(_this.props.timer.timer);
     _this.props.timer = null;
 
     _this.elem.classList.add('destroy');
 
-    console.log(_this.elem);
-    console.log('타이머가 끝남', _this.props);
+    console.log('타이머가 끝남');
   });
 
   _defineProperty(this, "initTimer", function () {
