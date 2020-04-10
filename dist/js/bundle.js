@@ -10250,26 +10250,314 @@ try {
 
 /***/ }),
 
-/***/ "./src/js/script.js":
-/*!**************************!*\
-  !*** ./src/js/script.js ***!
-  \**************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/***/ "./src/js/common/const.js":
+/*!********************************!*\
+  !*** ./src/js/common/const.js ***!
+  \********************************/
+/*! exports provided: timeOptions, IncreseTimeOption, DecreseTimeOption */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nError: ENOENT: no such file or directory, open '/Users/maymkwon-1/Desktop/timermessage/src/js/script.js'");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "timeOptions", function() { return timeOptions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IncreseTimeOption", function() { return IncreseTimeOption; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DecreseTimeOption", function() { return DecreseTimeOption; });
+var timeOptions = [{
+  title: '3초',
+  value: 3000
+}, {
+  title: '5초',
+  value: 5000
+}, {
+  title: '10초',
+  value: 10000
+}, {
+  title: '30초',
+  value: 30000
+}, {
+  title: '1분',
+  value: 60000
+}];
+var IncreseTimeOption = [{
+  title: '3초',
+  value: '3'
+}, {
+  title: '5초',
+  value: '5'
+}, {
+  title: 'X2',
+  value: 'double'
+}, {
+  title: 'X3',
+  value: 'triple'
+}];
+var DecreseTimeOption = [{
+  title: '3초',
+  value: '3'
+}, {
+  title: '5초',
+  value: '5'
+}];
+
+/***/ }),
+
+/***/ "./src/js/common/utils.js":
+/*!********************************!*\
+  !*** ./src/js/common/utils.js ***!
+  \********************************/
+/*! exports provided: createElement */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createElement", function() { return createElement; });
+var createElement = function createElement(tag, className) {
+  var element = document.createElement(tag);
+  if (className) element.classList.add(className);
+  return element;
+};
+
+/***/ }),
+
+/***/ "./src/js/main.js":
+/*!************************!*\
+  !*** ./src/js/main.js ***!
+  \************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _timer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./timer */ "./src/js/timer/index.js");
+/* harmony import */ var _common_const__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/const */ "./src/js/common/const.js");
+/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common/utils */ "./src/js/common/utils.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+ // import Subject from './scripts/subject';
+
+var messageInput = document.getElementById('message-input');
+var timeOptionInput = document.getElementById('message-time-option');
+var addMessageBtn = document.getElementById('message-add-btn');
+var listContainer = document.getElementById('message-list-container');
+addMessageBtn.onclick = addNew;
+
+function addNew() {
+  if (messageInput.value.trim().length <= 3) {
+    alert('3자이상 입력해 주세요');
+  } else {
+    var li = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('li');
+    var list = new ListItem({
+      elem: li,
+      title: messageInput.value,
+      time: timeOptionInput.value
+    });
+    resetInput();
+    listContainer.appendChild(list.render());
+  }
+}
+
+function resetInput() {
+  messageInput.value = '';
+}
+
+var Observer = function Observer() {
+  _classCallCheck(this, Observer);
+
+  this.update = function () {};
+};
+
+var ListItem = function ListItem(props) {
+  var _this = this;
+
+  _classCallCheck(this, ListItem);
+
+  _defineProperty(this, "timeConvert", function (time) {
+    var convertTime = parseInt(time) * 1000;
+    return convertTime;
+  });
+
+  _defineProperty(this, "controlTime", function (time, type) {
+    console.log('in', time, type);
+
+    if (_this.props.timer) {
+      var convertTime = _this.timeConvert(time);
+
+      _this.props.time = parseInt(_this.props.time) + parseInt(time) + '';
+
+      if (type === 'increse') {
+        _this.props.timer.increse(convertTime);
+      } else if (type === 'decrese') {
+        _this.props.timer.decrese(convertTime);
+      }
+    }
+  });
+
+  _defineProperty(this, "destroy", function () {
+    console.log('destroy'); // 없어졌다고 알려줘야함
+    // 인스턴스 변수 = null
+    // dom 삭제
+    // localEventListener 삭제X
+
+    console.log(_this.props.timer.timer);
+    clearInterval(_this.props.timer.timer);
+    _this.props.timer = null;
+    console.log('타이머가 끝남', _this.props);
+  });
+
+  _defineProperty(this, "initTimer", function () {
+    var time = _this.props.time;
+    _this.props.timer = new _timer__WEBPACK_IMPORTED_MODULE_0__["default"](_this.destroy, _this.timeConvert(time));
+  });
+
+  _defineProperty(this, "createTimeOption", function (target, options) {
+    if (!options.length) return;
+    options.forEach(function (option) {
+      return target.options.add(new Option(option.title, option.value));
+    });
+  });
+
+  _defineProperty(this, "renderInnerNode", function () {
+    var increseSelect = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('select', 'increse-select');
+    var increseButton = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('button', 'increse-button');
+    increseButton.textContent = '증가';
+    increseButton.name = 'increse';
+
+    _this.createTimeOption(increseSelect, _common_const__WEBPACK_IMPORTED_MODULE_1__["IncreseTimeOption"]);
+
+    var decreseSelect = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('select', 'decrese-select');
+    var decreseButton = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('button', 'decrese-button');
+    decreseButton.textContent = '감소';
+    decreseButton.name = 'decrese';
+
+    _this.createTimeOption(decreseSelect, _common_const__WEBPACK_IMPORTED_MODULE_1__["DecreseTimeOption"]);
+
+    return {
+      increseSelect: increseSelect,
+      increseButton: increseButton,
+      decreseSelect: decreseSelect,
+      decreseButton: decreseButton
+    };
+  });
+
+  _defineProperty(this, "render", function () {
+    var _this$props = _this.props,
+        title = _this$props.title,
+        time = _this$props.time;
+    console.log('render', _this.props);
+
+    _this.initTimer(); // const li = createElement('li');
+    // 타이틀
+
+
+    var p = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('p');
+    p.textContent = title; // 남은시간
+
+    var span = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('span', 'time-remain');
+    span.textContent = time;
+    p.appendChild(span); // 시간변경 nodes
+
+    var _this$renderInnerNode = _this.renderInnerNode(),
+        increseSelect = _this$renderInnerNode.increseSelect,
+        increseButton = _this$renderInnerNode.increseButton,
+        decreseSelect = _this$renderInnerNode.decreseSelect,
+        decreseButton = _this$renderInnerNode.decreseButton; //
+
+
+    increseButton.onclick = function (e) {
+      return _this.controlTime(increseSelect.value, e.target.name);
+    };
+
+    decreseButton.onclick = function (e) {
+      return _this.controlTime(decreseSelect.value, e.target.name);
+    };
+
+    _this.elem.append(p, increseSelect, increseButton, decreseSelect, decreseButton);
+
+    return _this.elem;
+  });
+
+  this.timer = null;
+  this.elem = props.elem;
+  this.props = _objectSpread({}, props, {
+    timer: this.timer
+  });
+  console.log(this);
+};
+
+/***/ }),
+
+/***/ "./src/js/timer/index.js":
+/*!*******************************!*\
+  !*** ./src/js/timer/index.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Timer; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Timer = function Timer(callback, time) {
+  _classCallCheck(this, Timer);
+
+  this.setTimeout(callback, time);
+};
+
+
+
+Timer.prototype.setTimeout = function (callback, time) {
+  var self = this;
+
+  if (this.timer) {
+    clearTimeout(this.timer);
+  }
+
+  this.finished = false;
+  this.callback = callback;
+  this.time = time;
+  this.timer = setTimeout(function () {
+    self.finished = true;
+    callback();
+  }, time);
+  this.start = Date.now();
+};
+
+Timer.prototype.increse = function (time) {
+  if (!this.finished) {
+    // add time to time left
+    time = this.time - (Date.now() - this.start) + time;
+    this.setTimeout(this.callback, time);
+  }
+};
+
+Timer.prototype.decrese = function (time) {
+  if (!this.finished) {
+    // add time to time left
+    time = this.time - (Date.now() - this.start) - time;
+    this.setTimeout(this.callback, time);
+  }
+};
 
 /***/ }),
 
 /***/ 0:
-/*!************************************************!*\
-  !*** multi @babel/polyfill ./src/js/script.js ***!
-  \************************************************/
+/*!**********************************************!*\
+  !*** multi @babel/polyfill ./src/js/main.js ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! @babel/polyfill */"./node_modules/@babel/polyfill/lib/index.js");
-module.exports = __webpack_require__(/*! ./src/js/script.js */"./src/js/script.js");
+module.exports = __webpack_require__(/*! ./src/js/main.js */"./src/js/main.js");
 
 
 /***/ })

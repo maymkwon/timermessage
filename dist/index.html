@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>펑리스트</title>
+    <meta charset="UTF-8" />
+    <style>
+      #root {
+        width: 400px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </head>
   <body>
-    <div id="root"></div>
-  <script src="js/bundle.js"></script></body>
+    <div id="root">
+      <input type="text" id="message-input" />
+      <select name="time-option" id="message-time-option">
+        <option value="3">3초</option>
+        <option value="5">5초</option>
+        <option value="10">10초</option>
+        <option value="30">30초</option>
+        <option value="60">1분</option>
+      </select>
+      <button id="message-add-btn">추가</button>
+      <ul id="message-list-container"></ul>
+    </div>
+    <script src="js/bundle.js"></script>
+  </body>
 </html>

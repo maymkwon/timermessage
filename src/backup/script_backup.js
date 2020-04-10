@@ -51,11 +51,6 @@ class Model {
   }
 }
 
-/**
- * @class View
- *
- * Visual representation of the model.
- */
 class View {
   constructor() {
     this.app = this.getElement('#root');
@@ -195,14 +190,6 @@ class View {
   }
 }
 
-/**
- * @class Controller
- *
- * Links the user input and the view output.
- *
- * @param model
- * @param view
- */
 class Controller {
   constructor(model, view) {
     this.model = model;
