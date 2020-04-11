@@ -1,39 +1,41 @@
 **목차**
 
-4가지 문제중 2번쨰 펑리스트 문제를 선택하여 진행하였습니다.
-
 # Table of Contents
 
-1. [실행 방법](#start)
-2. [빌드 방법](#build)
-3. [폴더 구조](#structure)
-4. [진행 과정](#process)
-5. [프로젝트 모듈구조](#pro-struc)
-6. [회고](#retrospect)
+1. [빌드 방법](#build)
+2. [폴더 구조](#structure)
+3. [진행 과정](#process)
+4. [프로젝트 모듈구조](#pro-struc)
+5. ## [회고](#retrospect)
+
+### 4가지 문제중 2번째 **펑리스트** 문제를 선택하여 진행하였습니다.
 
 ---
 
-## 실행 방법 <a name="start"></a>
+## 기본 설명 및 부족한점 <a name="retrospect"></a>
 
-1. `cd ./client` 클라이언트 폴더로 이동
-2. `npm i` 커맨드 입력
-3. `npm start`
-4. `localhost:3000` 접속
+- 테스트 미흡.
+- 타이머가 실시간으로 시간이 차감되어야 하는데 작업하지 못함.
+- 타이머 카운드를 하기위해서 관찰자를 하나두어서 엘리먼트의 text를 바꾸려고 하였습니다.
+- 현재구조상 이벤트(추가,수정,삭제)를 발생 -> 전체를 새로 그리게 됨. 카운트 감소의 기능을 고민
+- 타이머는 추가를 하거나 감소를 할때 시간이 변경 되어야 하는 문제는 액션이 일어나면 발생한 타이머가 있는지 확인후 타이머가 있으면 타이머를 클리어후 추가할 시간을 받아 새로운 타이머를 실행하는 기능으로 개발 하였습니다.
 
 ---
 
 ## 빌드 방법 <a name="build"></a>
 
-`npm run build`
+1. `npm i`
+2. `npm run build`
+3. dist 폴더의 index.html에 결과물이 표시됩니다.
 
 ---
 
 ## 폴더구조 <a name="structure"></a>
 
 ```
-.src
+./src
 +-- js
-|   +-- common  : 공통, 상수, 유틸함수 관련 폴더
+|   +-- common  : 공통 상수, 유틸함수 관련 폴더
 |   +-- scripts : MODEL, VIEW, CONTROLLER 파일
 |   +-- timer   : 타이머 관련 파일
 |
@@ -44,21 +46,12 @@
 
 ---
 
-## 진행과정 <a name="process"></a>
-
--
-
----
-
 ## 프로젝트 모듈구조 <a name="pro-struc"></a>
 
-- CONTROLLER :
-- CONTROLLER :
+![pro-struc](./module-struc.png)
+
+- CONTROLLER : 모델과 뷰를 묶어서 모델과 뷰의 상태를 관리합니다.
+- MODEL : **타이머 데이터**의 추가, 업데이트, 삭제기능을 담당합니다.
+- VIEW : CONTROLLER에서 전달받은 **타이머 데이터**로 Element 들을 생성합니다. 이벤트들을 연결하여 핸들러에 전달합니다.
 
 ---
-
----
-
-## 회고 (부족한점) <a name="retrospect"></a>
-
--
