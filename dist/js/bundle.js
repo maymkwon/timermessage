@@ -10254,13 +10254,13 @@ try {
 /*!********************************!*\
   !*** ./src/js/common/const.js ***!
   \********************************/
-/*! exports provided: IncreseTimeOption, DecreseTimeOption, EventName */
+/*! exports provided: IncreseTimeOption, decreaseTimeOption, EventName */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IncreseTimeOption", function() { return IncreseTimeOption; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DecreseTimeOption", function() { return DecreseTimeOption; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "decreaseTimeOption", function() { return decreaseTimeOption; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EventName", function() { return EventName; });
 var IncreseTimeOption = [{
   title: "3초",
@@ -10275,7 +10275,7 @@ var IncreseTimeOption = [{
   title: "X3",
   value: "triple"
 }];
-var DecreseTimeOption = [{
+var decreaseTimeOption = [{
   title: "3초",
   value: "3"
 }, {
@@ -10340,15 +10340,7 @@ __webpack_require__.r(__webpack_exports__);
 var model = new _scripts_model__WEBPACK_IMPORTED_MODULE_0__["default"]();
 var view = new _scripts_view__WEBPACK_IMPORTED_MODULE_1__["default"]();
 var app = new _scripts_controller__WEBPACK_IMPORTED_MODULE_2__["default"](model, view);
-console.log(app.view.timerListElement);
-
-function intervalCount() {
-  var parent = app.view.timerListElement;
-  var countTextElem = parent.querySelectorAll(".remain-time");
-  console.log(countTextElem);
-}
-
-intervalCount();
+console.log(app);
 
 /***/ }),
 
@@ -10417,18 +10409,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Model; });
 /* harmony import */ var _timer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../timer */ "./src/js/timer/index.js");
 /* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/utils */ "./src/js/common/utils.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
 var Model = /*#__PURE__*/function () {
   function Model() {
+    var _this = this;
+
     _classCallCheck(this, Model);
+
+    _defineProperty(this, "addTimerItem", function (timerInfo) {
+      var title = timerInfo.title,
+          time = timerInfo.time;
+      _this.id++;
+      var id = _this.id; // 실행과 동시에 타이머 스타트
+
+      var timerInstance = new _timer__WEBPACK_IMPORTED_MODULE_0__["default"](function () {
+        return _this.destroy(id);
+      }, Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
+      var timerItem = {
+        id: id,
+        title: title,
+        time: Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["toSec"])(timerInstance.time),
+        timerInstance: timerInstance
+      };
+
+      _this.timerList.push(timerItem); // 갱신
+
+
+      _this._commit(_this.timerList);
+    });
 
     this.timerList = [];
     this.id = 0;
@@ -10442,31 +10464,33 @@ var Model = /*#__PURE__*/function () {
   }, {
     key: "_commit",
     value: function _commit(timers) {
-      this.onTimerListChanged(timers);
-    }
-  }, {
-    key: "addTimerItem",
-    value: function addTimerItem(timerInfo) {
-      var _this = this;
+      var newList = [];
+      timers.forEach(function (o) {
+        var obj = _objectSpread({}, o);
 
-      var title = timerInfo.title,
-          time = timerInfo.time;
-      this.id++;
-      var id = this.id; // 실행과 동시에 타이머 스타트
+        obj.time = Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["toSec"])(o.timerInstance.time - (Date.now() - o.timerInstance.start));
+        newList.push(obj);
+      });
+      this.timerList = newList.sort(function (a, b) {
+        return a.time - b.time;
+      });
+      this.onTimerListChanged(this.timerList);
+    } // // 1초단위로 갱신 => DOM이 새로 생기면서 선택옵션을 선택 할 수 없음
+    // initalInterval = timers => {
+    //   if (this.modelInterval) {
+    //     clearInterval(this.modelInterval);
+    //   }
+    //   this.modelInterval = setInterval(() => {
+    //     if (!timers.length) {
+    //       clearInterval(this.modelInterval);
+    //     }
+    //     this._commit(timers);
+    //   }, 1000);
+    // };
+    // updateInterval = timers => {
+    //   this.intervalsInit(timers);
+    // };
 
-      var timerInstance = new _timer__WEBPACK_IMPORTED_MODULE_0__["default"](function () {
-        return _this.destroy(id);
-      }, Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
-      var timerItem = {
-        id: id,
-        title: title,
-        time: Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["toSec"])(timerInstance.time),
-        timerInstance: timerInstance
-      };
-      this.timerList.push(timerItem); // 갱신
-
-      this._commit(this.timerList);
-    }
   }, {
     key: "_findIndex",
     value: function _findIndex(id) {
@@ -10492,7 +10516,7 @@ var Model = /*#__PURE__*/function () {
         }
       }
 
-      console.log("삭제됨?", this.timerList); // 갱신
+      console.log("삭제!", this.timerList); // 갱신
 
       this._commit(this.timerList);
     } // 시간 증가 감소
@@ -10507,8 +10531,8 @@ var Model = /*#__PURE__*/function () {
 
       if (type === "increse") {
         target.timerInstance.increse(Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
-      } else if (type === "decrese") {
-        target.timerInstance.decrese(Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
+      } else if (type === "decrease") {
+        target.timerInstance.decrease(Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
       }
 
       target.time = Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["toSec"])(target.timerInstance.time); // 갱신
@@ -10577,18 +10601,18 @@ var View = /*#__PURE__*/function () {
       // 감소 영역
 
 
-      var decreseBox = _this.createElement("div", "decrese-area");
+      var decreaseBox = _this.createElement("div", "decrease-area");
 
-      var decreseSelect = _this.createElement("select");
+      var decreaseSelect = _this.createElement("select");
 
-      decreseSelect.id = "decrese-select-".concat(parentId);
+      decreaseSelect.id = "decrease-select-".concat(parentId);
 
-      var decreseButton = _this.createElement("button", "time-control-btn");
+      var decreaseButton = _this.createElement("button", "time-control-btn");
 
-      decreseButton.textContent = "감소";
-      decreseButton.name = "decrese";
+      decreaseButton.textContent = "감소";
+      decreaseButton.name = "decrease";
 
-      _this.createTimeOption(decreseSelect, _common_const__WEBPACK_IMPORTED_MODULE_0__["DecreseTimeOption"]); // decreseBox.append(decreseSelect, decreseButton);
+      _this.createTimeOption(decreaseSelect, _common_const__WEBPACK_IMPORTED_MODULE_0__["decreaseTimeOption"]); // decreaseBox.append(decreaseSelect, decreaseButton);
       // 삭제버튼
 
 
@@ -10600,8 +10624,8 @@ var View = /*#__PURE__*/function () {
         deleteButton: deleteButton,
         increseSelect: increseSelect,
         increseButton: increseButton,
-        decreseSelect: decreseSelect,
-        decreseButton: decreseButton
+        decreaseSelect: decreaseSelect,
+        decreaseButton: decreaseButton
       };
     });
 
@@ -10664,42 +10688,26 @@ var View = /*#__PURE__*/function () {
 
           p1.textContent = title;
 
-          var span = _this2.createElement("span", "time-remain"); // 남은시간
+          var span = _this2.createElement("span", "time-remain");
 
+          span.textContent = time; // 남은시간
 
-          var i = time;
-          var intervalId = setInterval(function () {
-            if (i === 0) {
-              clearInterval(intervalId);
-            }
-
-            console.log(i);
-            span.textContent = time;
-            i--;
-          }, 1000); // while (i !== 0) {
-          //   console.log(i);
-          //   span.textContent = time;
-          //   i--;
-          // }
-
-          var test = // 시간변경 nodes
           p1.append(span);
 
           var _this2$renderInnerNod = _this2.renderInnerNode(id),
               deleteButton = _this2$renderInnerNod.deleteButton,
               increseSelect = _this2$renderInnerNod.increseSelect,
               increseButton = _this2$renderInnerNod.increseButton,
-              decreseSelect = _this2$renderInnerNod.decreseSelect,
-              decreseButton = _this2$renderInnerNod.decreseButton;
+              decreaseSelect = _this2$renderInnerNod.decreaseSelect,
+              decreaseButton = _this2$renderInnerNod.decreaseButton;
 
-          li.append(p1, increseSelect, increseButton, decreseSelect, decreseButton, deleteButton); // this.timerListElement의 자식 엘리먼트로 append
+          li.append(p1, increseSelect, increseButton, decreaseSelect, decreaseButton, deleteButton); // this.timerListElement의 자식 엘리먼트로 append
 
           _this2.timerListElement.append(li);
         });
-      } // debug TODO/
+      }
 
-
-      console.log(timerList);
+      console.log("타이머 데이터 입니다.", timerList);
     }
   }, {
     key: "bindAddItem",
@@ -10743,15 +10751,6 @@ var View = /*#__PURE__*/function () {
 
           var select = _this4.getElement("#".concat(type, "-select-").concat(id));
 
-          var remainElem = parent.querySelector(".time-remain");
-          console.log(remainElem.textContent); // console.log(parent.id);
-          // remainElem.textContent =
-          //   type === "increse"
-          //     ? parseInt(remainElem.textContent) + timeConvert(select.value) + ""
-          //     : parseInt(remainElem.textContent) - timeConvert(select.value) + "";
-          // 셀렉트 옵션 value 는 버튼(time-control-btn)의 이름으로 찾아옴
-
-          console.log(type);
           handler(id, select.value, type);
         }
       });
@@ -10827,7 +10826,7 @@ Timer.prototype.increse = function (time) {
   }
 };
 
-Timer.prototype.decrese = function (time) {
+Timer.prototype.decrease = function (time) {
   if (!this.finished) {
     time = this.time - (Date.now() - this.start) - time;
     this.setTimeout(this.callback, time);

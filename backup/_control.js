@@ -1,4 +1,4 @@
-import { timeOptions } from "../js/common/const";
+import { timeOptions } from "../src/js/common/const";
 // https://github.com/priyath/todomvc
 // var timer = new Timer(function () {
 //   // init timer with 5 seconds

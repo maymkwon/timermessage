@@ -1,7 +1,7 @@
-import Timer from "../timer";
-import { IncreseTimeOption, DecreseTimeOption } from "../common/const";
-import { createElement } from "../common/utils";
-import CustomEventDom from "../common/customEvent";
+import Timer from "./src/js/timer";
+import { IncreseTimeOption, decreaseTimeOption } from "./src/js/common/const";
+import { createElement } from "./src/js/common/utils";
+import CustomEventDom from "./src/js/common/customEvent";
 
 export default class ListItem {
   constructor(props) {
@@ -23,8 +23,8 @@ export default class ListItem {
       this.props.time = parseInt(this.props.time) + parseInt(time) + "";
       if (type === "increse") {
         this.props.timer.increse(convertTime);
-      } else if (type === "decrese") {
-        this.props.timer.decrese(convertTime);
+      } else if (type === "decrease") {
+        this.props.timer.decrease(convertTime);
       }
     }
   };
@@ -74,11 +74,11 @@ export default class ListItem {
     increseButton.textContent = "증가";
     increseButton.name = "increse";
     this.createTimeOption(increseSelect, IncreseTimeOption);
-    const decreseSelect = createElement("select", "decrese-select");
-    const decreseButton = createElement("button", "decrese-button");
-    decreseButton.textContent = "감소";
-    decreseButton.name = "decrese";
-    this.createTimeOption(decreseSelect, DecreseTimeOption);
+    const decreaseSelect = createElement("select", "decrease-select");
+    const decreaseButton = createElement("button", "decrease-button");
+    decreaseButton.textContent = "감소";
+    decreaseButton.name = "decrease";
+    this.createTimeOption(decreaseSelect, decreaseTimeOption);
 
     const deleteButton = createElement("button", "delete-button");
     deleteButton.name = "delete";
@@ -87,8 +87,8 @@ export default class ListItem {
     return {
       increseSelect,
       increseButton,
-      decreseSelect,
-      decreseButton,
+      decreaseSelect,
+      decreaseButton,
       deleteButton
     };
   };
@@ -110,23 +110,23 @@ export default class ListItem {
     const {
       increseSelect,
       increseButton,
-      decreseSelect,
-      decreseButton,
+      decreaseSelect,
+      decreaseButton,
       deleteButton
     } = this.renderInnerNode();
     //
 
     increseButton.onclick = e =>
       this.controlTime(increseSelect.value, e.target.name);
-    decreseButton.onclick = e =>
-      this.controlTime(decreseSelect.value, e.target.name);
+    decreaseButton.onclick = e =>
+      this.controlTime(decreaseSelect.value, e.target.name);
 
     this.elem.append(
       p,
       increseSelect,
       increseButton,
-      decreseSelect,
-      decreseButton,
+      decreaseSelect,
+      decreaseButton,
       deleteButton
     );
 

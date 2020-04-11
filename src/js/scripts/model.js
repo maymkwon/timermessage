@@ -9,18 +9,42 @@ export default class Model {
   bindTimerListChanged(callback) {
     this.onTimerListChanged = callback;
   }
-
   _commit(timers) {
-    this.onTimerListChanged(timers);
+    const newList = [];
+    timers.forEach(o => {
+      let obj = { ...o };
+      obj.time = toSec(
+        o.timerInstance.time - (Date.now() - o.timerInstance.start)
+      );
+      newList.push(obj);
+    });
+    this.timerList = newList.sort((a, b) => a.time - b.time);
+    this.onTimerListChanged(this.timerList);
   }
 
-  addTimerItem(timerInfo) {
+  // // 1초단위로 갱신 => DOM이 새로 생기면서 선택옵션을 선택 할 수 없음
+  // initalInterval = timers => {
+  //   if (this.modelInterval) {
+  //     clearInterval(this.modelInterval);
+  //   }
+  //   this.modelInterval = setInterval(() => {
+  //     if (!timers.length) {
+  //       clearInterval(this.modelInterval);
+  //     }
+  //     this._commit(timers);
+  //   }, 1000);
+  // };
+
+  // updateInterval = timers => {
+  //   this.intervalsInit(timers);
+  // };
+
+  addTimerItem = timerInfo => {
     const { title, time } = timerInfo;
     this.id++;
     const id = this.id;
     // 실행과 동시에 타이머 스타트
     const timerInstance = new Timer(() => this.destroy(id), timeConvert(time));
-
     const timerItem = {
       id,
       title,
@@ -31,7 +55,7 @@ export default class Model {
     this.timerList.push(timerItem);
     // 갱신
     this._commit(this.timerList);
-  }
+  };
 
   _findIndex(id) {
     const index = this.timerList.findIndex(o => o.id === id);
@@ -50,8 +74,9 @@ export default class Model {
         this.timerList.splice(index, 1);
       }
     }
-    console.log("삭제됨?", this.timerList);
+    console.log("삭제!", this.timerList);
     // 갱신
+
     this._commit(this.timerList);
   }
 
@@ -63,8 +88,8 @@ export default class Model {
 
     if (type === "increse") {
       target.timerInstance.increse(timeConvert(time));
-    } else if (type === "decrese") {
-      target.timerInstance.decrese(timeConvert(time));
+    } else if (type === "decrease") {
+      target.timerInstance.decrease(timeConvert(time));
     }
     target.time = toSec(target.timerInstance.time);
     // 갱신

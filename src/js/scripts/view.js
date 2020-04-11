@@ -1,4 +1,4 @@
-import { IncreseTimeOption, DecreseTimeOption } from "../common/const";
+import { IncreseTimeOption, decreaseTimeOption } from "../common/const";
 import { timeConvert } from "../common/utils";
 export default class View {
   constructor() {
@@ -56,14 +56,14 @@ export default class View {
     // increseBox.append(increseSelect, increseButton);
 
     // 감소 영역
-    const decreseBox = this.createElement("div", "decrese-area");
-    const decreseSelect = this.createElement("select");
-    decreseSelect.id = `decrese-select-${parentId}`;
-    const decreseButton = this.createElement("button", "time-control-btn");
-    decreseButton.textContent = "감소";
-    decreseButton.name = "decrese";
-    this.createTimeOption(decreseSelect, DecreseTimeOption);
-    // decreseBox.append(decreseSelect, decreseButton);
+    const decreaseBox = this.createElement("div", "decrease-area");
+    const decreaseSelect = this.createElement("select");
+    decreaseSelect.id = `decrease-select-${parentId}`;
+    const decreaseButton = this.createElement("button", "time-control-btn");
+    decreaseButton.textContent = "감소";
+    decreaseButton.name = "decrease";
+    this.createTimeOption(decreaseSelect, decreaseTimeOption);
+    // decreaseBox.append(decreaseSelect, decreaseButton);
 
     // 삭제버튼
     const deleteButton = this.createElement("button", "delete-button");
@@ -73,8 +73,8 @@ export default class View {
       deleteButton,
       increseSelect,
       increseButton,
-      decreseSelect,
-      decreseButton
+      decreaseSelect,
+      decreaseButton
     };
   };
 
@@ -99,40 +99,25 @@ export default class View {
         const p1 = this.createElement("p");
         p1.textContent = title;
         const span = this.createElement("span", "time-remain");
+        span.textContent = time;
         // 남은시간
 
-        let i = time;
-        let intervalId = setInterval(function() {
-          if (i === 0) {
-            clearInterval(intervalId);
-          }
-          console.log(i);
-          span.textContent = time;
-          i--;
-        }, 1000);
-        // while (i !== 0) {
-        //   console.log(i);
-        //   span.textContent = time;
-        //   i--;
-        // }
-        const test =
-          // 시간변경 nodes
-          p1.append(span);
+        p1.append(span);
 
         const {
           deleteButton,
           increseSelect,
           increseButton,
-          decreseSelect,
-          decreseButton
+          decreaseSelect,
+          decreaseButton
         } = this.renderInnerNode(id);
 
         li.append(
           p1,
           increseSelect,
           increseButton,
-          decreseSelect,
-          decreseButton,
+          decreaseSelect,
+          decreaseButton,
           deleteButton
         );
 
@@ -140,9 +125,7 @@ export default class View {
         this.timerListElement.append(li);
       });
     }
-
-    // debug TODO/
-    console.log(timerList);
+    console.log("타이머 데이터 입니다.", timerList);
   }
 
   bindAddItem(handler) {
@@ -174,16 +157,6 @@ export default class View {
         const id = parseInt(event.target.parentElement.id);
         const type = event.target.name;
         const select = this.getElement(`#${type}-select-${id}`);
-        const remainElem = parent.querySelector(".time-remain");
-        console.log(remainElem.textContent);
-        // console.log(parent.id);
-
-        // remainElem.textContent =
-        //   type === "increse"
-        //     ? parseInt(remainElem.textContent) + timeConvert(select.value) + ""
-        //     : parseInt(remainElem.textContent) - timeConvert(select.value) + "";
-        // 셀렉트 옵션 value 는 버튼(time-control-btn)의 이름으로 찾아옴
-        console.log(type);
         handler(id, select.value, type);
       }
     });

@@ -33,7 +33,7 @@ Timer.prototype.increse = function(time) {
     this.setTimeout(this.callback, newTime);
   }
 };
-Timer.prototype.decrese = function(time) {
+Timer.prototype.decrease = function(time) {
   if (!this.finished) {
     time = this.time - (Date.now() - this.start) - time;
     this.setTimeout(this.callback, time);

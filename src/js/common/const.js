@@ -16,7 +16,7 @@ export const IncreseTimeOption = [
     value: "triple"
   }
 ];
-export const DecreseTimeOption = [
+export const decreaseTimeOption = [
   {
     title: "3초",
     value: "3"
