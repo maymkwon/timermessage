@@ -2,11 +2,10 @@
 
 # Table of Contents
 
-1. [빌드 방법](#build)
-2. [폴더 구조](#structure)
-3. [진행 과정](#process)
+1. [기본 설명 및 부족한점](#retrospect)
+2. [빌드 방법](#build)
+3. [폴더 구조](#structure)
 4. [프로젝트 모듈구조](#pro-struc)
-5. ## [회고](#retrospect)
 
 ### 4가지 문제중 2번째 **펑리스트** 문제를 선택하여 진행하였습니다.
 
