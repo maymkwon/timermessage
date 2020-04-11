@@ -10254,50 +10254,37 @@ try {
 /*!********************************!*\
   !*** ./src/js/common/const.js ***!
   \********************************/
-/*! exports provided: timeOptions, IncreseTimeOption, DecreseTimeOption */
+/*! exports provided: IncreseTimeOption, DecreseTimeOption, EventName */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "timeOptions", function() { return timeOptions; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IncreseTimeOption", function() { return IncreseTimeOption; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DecreseTimeOption", function() { return DecreseTimeOption; });
-var timeOptions = [{
-  title: '3초',
-  value: 3000
-}, {
-  title: '5초',
-  value: 5000
-}, {
-  title: '10초',
-  value: 10000
-}, {
-  title: '30초',
-  value: 30000
-}, {
-  title: '1분',
-  value: 60000
-}];
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EventName", function() { return EventName; });
 var IncreseTimeOption = [{
-  title: '3초',
-  value: '3'
+  title: "3초",
+  value: "3"
 }, {
-  title: '5초',
-  value: '5'
+  title: "5초",
+  value: "5"
 }, {
-  title: 'X2',
-  value: 'double'
+  title: "X2",
+  value: "double"
 }, {
-  title: 'X3',
-  value: 'triple'
+  title: "X3",
+  value: "triple"
 }];
 var DecreseTimeOption = [{
-  title: '3초',
-  value: '3'
+  title: "3초",
+  value: "3"
 }, {
-  title: '5초',
-  value: '5'
+  title: "5초",
+  value: "5"
 }];
+var EventName = {
+  destroy: "destroy"
+};
 
 /***/ }),
 
@@ -10305,16 +10292,32 @@ var DecreseTimeOption = [{
 /*!********************************!*\
   !*** ./src/js/common/utils.js ***!
   \********************************/
-/*! exports provided: createElement */
+/*! exports provided: createElement, timeConvert, toSec */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createElement", function() { return createElement; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "timeConvert", function() { return timeConvert; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toSec", function() { return toSec; });
 var createElement = function createElement(tag, className) {
   var element = document.createElement(tag);
   if (className) element.classList.add(className);
   return element;
+};
+var timeConvert = function timeConvert(time) {
+  var convertTime = 0;
+
+  if (isNaN(time)) {
+    convertTime = time;
+  } else {
+    convertTime = parseInt(time) * 1000;
+  }
+
+  return convertTime;
+};
+var toSec = function toSec(time) {
+  return (time % 60000 / 1000).toFixed(0);
 };
 
 /***/ }),
@@ -10328,216 +10331,443 @@ var createElement = function createElement(tag, className) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scripts_ListItem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scripts/ListItem */ "./src/js/scripts/ListItem.js");
-/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/utils */ "./src/js/common/utils.js");
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+/* harmony import */ var _scripts_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scripts/model */ "./src/js/scripts/model.js");
+/* harmony import */ var _scripts_view__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./scripts/view */ "./src/js/scripts/view.js");
+/* harmony import */ var _scripts_controller__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./scripts/controller */ "./src/js/scripts/controller.js");
 
 
 
-var messageInput = document.getElementById('message-input');
-var timeOptionInput = document.getElementById('message-time-option');
-var addMessageBtn = document.getElementById('message-add-btn');
-var listContainer = document.getElementById('message-list-container');
-addMessageBtn.onclick = addNew;
-var id = 0;
+var model = new _scripts_model__WEBPACK_IMPORTED_MODULE_0__["default"]();
+var view = new _scripts_view__WEBPACK_IMPORTED_MODULE_1__["default"]();
+var app = new _scripts_controller__WEBPACK_IMPORTED_MODULE_2__["default"](model, view);
+console.log(app.view.timerListElement);
 
-function addNew() {
-  if (messageInput.value.trim().length <= 3) {
-    alert('3자이상 입력해 주세요');
-  } else {
-    id++;
-    var li = Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["createElement"])('li');
-    li.id = id;
-    var list = new _scripts_ListItem__WEBPACK_IMPORTED_MODULE_0__["default"]({
-      elem: li,
-      title: messageInput.value,
-      time: timeOptionInput.value
-    });
-    resetInput();
-    listContainer.appendChild(list.render());
-  }
+function intervalCount() {
+  var parent = app.view.timerListElement;
+  var countTextElem = parent.querySelectorAll(".remain-time");
+  console.log(countTextElem);
 }
 
-function resetInput() {
-  messageInput.value = '';
-}
-
-var Observer = function Observer() {
-  _classCallCheck(this, Observer);
-
-  this.update = function () {};
-}; // create an observer instance
-
-
-var observer = new MutationObserver(function (mutations) {
-  mutations.forEach(function (mutation) {
-    console.log(mutation);
-  });
-}); // configuration of the observer:
-
-var config = {
-  attributes: true,
-  childList: true,
-  characterData: true
-}; // pass in the target node, as well as the observer options
-
-observer.observe(listContainer, config);
+intervalCount();
 
 /***/ }),
 
-/***/ "./src/js/scripts/ListItem.js":
-/*!************************************!*\
-  !*** ./src/js/scripts/ListItem.js ***!
-  \************************************/
+/***/ "./src/js/scripts/controller.js":
+/*!**************************************!*\
+  !*** ./src/js/scripts/controller.js ***!
+  \**************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ListItem; });
-/* harmony import */ var _timer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../timer */ "./src/js/timer/index.js");
-/* harmony import */ var _common_const__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/const */ "./src/js/common/const.js");
-/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/utils */ "./src/js/common/utils.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Controller; });
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Controller = function Controller(model, view) {
+  var _this = this;
+
+  _classCallCheck(this, Controller);
+
+  _defineProperty(this, "onTimerListChanged", function (todos) {
+    _this.view.displayItems(todos);
+  });
+
+  _defineProperty(this, "handleAddTimer", function (timerInfo) {
+    _this.model.addTimerItem(timerInfo);
+  });
+
+  _defineProperty(this, "handleControlTime", function (id, time, type) {
+    _this.model.controlTime(id, time, type);
+  });
+
+  _defineProperty(this, "handleDeleteTimerItem", function (id) {
+    _this.model.destroy(id);
+  });
+
+  this.model = model;
+  this.view = view; // 렌더링
+
+  this.model.bindTimerListChanged(this.onTimerListChanged); // 타이머 추가
+
+  this.view.bindAddItem(this.handleAddTimer); //시간 조절
+
+  this.view.bindControlTime(this.handleControlTime); // 타이머 개별 삭제
+
+  this.view.bindDeleteTimerItem(this.handleDeleteTimerItem); // 초기 로딩
+
+  this.onTimerListChanged(this.model.timerList);
+};
+
+
+
+/***/ }),
+
+/***/ "./src/js/scripts/model.js":
+/*!*********************************!*\
+  !*** ./src/js/scripts/model.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Model; });
+/* harmony import */ var _timer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../timer */ "./src/js/timer/index.js");
+/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/utils */ "./src/js/common/utils.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+
+var Model = /*#__PURE__*/function () {
+  function Model() {
+    _classCallCheck(this, Model);
+
+    this.timerList = [];
+    this.id = 0;
+  }
+
+  _createClass(Model, [{
+    key: "bindTimerListChanged",
+    value: function bindTimerListChanged(callback) {
+      this.onTimerListChanged = callback;
+    }
+  }, {
+    key: "_commit",
+    value: function _commit(timers) {
+      this.onTimerListChanged(timers);
+    }
+  }, {
+    key: "addTimerItem",
+    value: function addTimerItem(timerInfo) {
+      var _this = this;
+
+      var title = timerInfo.title,
+          time = timerInfo.time;
+      this.id++;
+      var id = this.id; // 실행과 동시에 타이머 스타트
+
+      var timerInstance = new _timer__WEBPACK_IMPORTED_MODULE_0__["default"](function () {
+        return _this.destroy(id);
+      }, Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
+      var timerItem = {
+        id: id,
+        title: title,
+        time: Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["toSec"])(timerInstance.time),
+        timerInstance: timerInstance
+      };
+      this.timerList.push(timerItem); // 갱신
+
+      this._commit(this.timerList);
+    }
+  }, {
+    key: "_findIndex",
+    value: function _findIndex(id) {
+      var index = this.timerList.findIndex(function (o) {
+        return o.id === id;
+      });
+      return index;
+    }
+  }, {
+    key: "destroy",
+    value: function destroy(id) {
+      if (this.timerList.length) {
+        // 타임 인스턴스 제거
+        var index = this._findIndex(id);
+
+        var target = this.timerList[index];
+
+        if (index > -1) {
+          target.time = 0;
+          clearTimeout(target.timerInstance.timer);
+          target.timerInstance = null;
+          this.timerList.splice(index, 1);
+        }
+      }
+
+      console.log("삭제됨?", this.timerList); // 갱신
+
+      this._commit(this.timerList);
+    } // 시간 증가 감소
+
+  }, {
+    key: "controlTime",
+    value: function controlTime(id, time, type) {
+      var index = this._findIndex(id);
+
+      console.log(index, "번째 타이머", time, type);
+      var target = this.timerList[index];
+
+      if (type === "increse") {
+        target.timerInstance.increse(Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
+      } else if (type === "decrese") {
+        target.timerInstance.decrese(Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["timeConvert"])(time));
+      }
+
+      target.time = Object(_common_utils__WEBPACK_IMPORTED_MODULE_1__["toSec"])(target.timerInstance.time); // 갱신
+
+      this._commit(this.timerList);
+    }
+  }]);
+
+  return Model;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/js/scripts/view.js":
+/*!********************************!*\
+  !*** ./src/js/scripts/view.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return View; });
+/* harmony import */ var _common_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/const */ "./src/js/common/const.js");
+/* harmony import */ var _common_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/utils */ "./src/js/common/utils.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
 
+var View = /*#__PURE__*/function () {
+  function View() {
+    var _this = this;
 
-var ListItem = function ListItem(props) {
-  var _this = this;
+    _classCallCheck(this, View);
 
-  _classCallCheck(this, ListItem);
-
-  _defineProperty(this, "timeConvert", function (time) {
-    var convertTime = parseInt(time) * 1000;
-    return convertTime;
-  });
-
-  _defineProperty(this, "controlTime", function (time, type) {
-    console.log('in', time, type);
-
-    if (_this.props.timer) {
-      var convertTime = _this.timeConvert(time);
-
-      _this.props.time = parseInt(_this.props.time) + parseInt(time) + '';
-
-      if (type === 'increse') {
-        _this.props.timer.increse(convertTime);
-      } else if (type === 'decrese') {
-        _this.props.timer.decrese(convertTime);
-      }
-    }
-  });
-
-  _defineProperty(this, "destroy", function () {
-    console.log('destroy'); // 없어졌다고 알려줘야함
-    // 인스턴스 변수 = null
-    // dom 삭제
-    // localEventListener 삭제X
-
-    clearInterval(_this.props.timer.timer);
-    _this.props.timer = null;
-
-    _this.elem.classList.add('destroy');
-
-    console.log('타이머가 끝남');
-  });
-
-  _defineProperty(this, "initTimer", function () {
-    var time = _this.props.time;
-    _this.props.timer = new _timer__WEBPACK_IMPORTED_MODULE_0__["default"](_this.destroy, _this.timeConvert(time));
-  });
-
-  _defineProperty(this, "createTimeOption", function (target, options) {
-    if (!options.length) return;
-    options.forEach(function (option) {
-      return target.options.add(new Option(option.title, option.value));
+    _defineProperty(this, "createTimeOption", function (target, options) {
+      if (!options.length) return;
+      options.forEach(function (option) {
+        return target.options.add(new Option(option.title, option.value));
+      });
     });
-  });
 
-  _defineProperty(this, "renderInnerNode", function () {
-    var increseSelect = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('select', 'increse-select');
-    var increseButton = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('button', 'increse-button');
-    increseButton.textContent = '증가';
-    increseButton.name = 'increse';
+    _defineProperty(this, "renderInnerNode", function (parentId) {
+      // 증가영역
+      var increseBox = _this.createElement("div", "increse-area");
 
-    _this.createTimeOption(increseSelect, _common_const__WEBPACK_IMPORTED_MODULE_1__["IncreseTimeOption"]);
+      var increseSelect = _this.createElement("select");
 
-    var decreseSelect = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('select', 'decrese-select');
-    var decreseButton = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('button', 'decrese-button');
-    decreseButton.textContent = '감소';
-    decreseButton.name = 'decrese';
+      increseSelect.id = "increse-select-".concat(parentId);
 
-    _this.createTimeOption(decreseSelect, _common_const__WEBPACK_IMPORTED_MODULE_1__["DecreseTimeOption"]);
+      var increseButton = _this.createElement("button", "time-control-btn");
 
-    var deleteButton = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('button', 'delete-button');
-    deleteButton.name = 'delete';
+      increseButton.textContent = "증가";
+      increseButton.name = "increse";
 
-    deleteButton.onclick = function () {
-      return _this.destroy();
-    };
-
-    return {
-      increseSelect: increseSelect,
-      increseButton: increseButton,
-      decreseSelect: decreseSelect,
-      decreseButton: decreseButton,
-      deleteButton: deleteButton
-    };
-  });
-
-  _defineProperty(this, "render", function () {
-    var _this$props = _this.props,
-        title = _this$props.title,
-        time = _this$props.time;
-    console.log('render', _this.props);
-
-    _this.initTimer(); // const li = createElement('li');
-    // 타이틀
+      _this.createTimeOption(increseSelect, _common_const__WEBPACK_IMPORTED_MODULE_0__["IncreseTimeOption"]); // increseBox.append(increseSelect, increseButton);
+      // 감소 영역
 
 
-    var p = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('p');
-    p.textContent = title; // 남은시간
+      var decreseBox = _this.createElement("div", "decrese-area");
 
-    var span = Object(_common_utils__WEBPACK_IMPORTED_MODULE_2__["createElement"])('span', 'time-remain');
-    span.textContent = time;
-    p.appendChild(span); // 시간변경 nodes
+      var decreseSelect = _this.createElement("select");
 
-    var _this$renderInnerNode = _this.renderInnerNode(),
-        increseSelect = _this$renderInnerNode.increseSelect,
-        increseButton = _this$renderInnerNode.increseButton,
-        decreseSelect = _this$renderInnerNode.decreseSelect,
-        decreseButton = _this$renderInnerNode.decreseButton,
-        deleteButton = _this$renderInnerNode.deleteButton; //
+      decreseSelect.id = "decrese-select-".concat(parentId);
+
+      var decreseButton = _this.createElement("button", "time-control-btn");
+
+      decreseButton.textContent = "감소";
+      decreseButton.name = "decrese";
+
+      _this.createTimeOption(decreseSelect, _common_const__WEBPACK_IMPORTED_MODULE_0__["DecreseTimeOption"]); // decreseBox.append(decreseSelect, decreseButton);
+      // 삭제버튼
 
 
-    increseButton.onclick = function (e) {
-      return _this.controlTime(increseSelect.value, e.target.name);
-    };
+      var deleteButton = _this.createElement("button", "delete-button");
 
-    decreseButton.onclick = function (e) {
-      return _this.controlTime(decreseSelect.value, e.target.name);
-    };
+      deleteButton.name = "delete";
+      deleteButton.textContent = "삭제";
+      return {
+        deleteButton: deleteButton,
+        increseSelect: increseSelect,
+        increseButton: increseButton,
+        decreseSelect: decreseSelect,
+        decreseButton: decreseButton
+      };
+    });
 
-    _this.elem.append(p, increseSelect, increseButton, decreseSelect, decreseButton, deleteButton);
+    // this.app = this.getElement("#root");
+    this.select = this.getElement("#message-time-option");
+    this.form = this.getElement("#message-form");
+    this.input = this.getElement("#message-input");
+    this.submitButton = this.getElement("#message-add-btn");
+    this.timerListElement = this.getElement("#message-list-container");
+  }
 
-    return _this.elem;
-  });
+  _createClass(View, [{
+    key: "_resetInput",
+    value: function _resetInput() {
+      this.input.value = ""; // this.select.value = "3";
+    } // util 함수(dom create)
 
-  this.timer = null;
-  this.elem = props.elem;
-  this.props = _objectSpread({}, props, {
-    timer: this.timer
-  });
-  console.log(this);
-};
+  }, {
+    key: "createElement",
+    value: function createElement(tag, className) {
+      var element = document.createElement(tag);
+      if (className) element.classList.add(className);
+      return element;
+    } // util 함수(dom find)
+
+  }, {
+    key: "getElement",
+    value: function getElement(selector) {
+      var element = document.querySelector(selector);
+      return element;
+    } // 타임옵션 생성함수
+
+  }, {
+    key: "displayItems",
+    // 내부 elem + 리스트 렌더
+    value: function displayItems(timerList) {
+      var _this2 = this;
+
+      while (this.timerListElement.firstChild) {
+        this.timerListElement.removeChild(this.timerListElement.firstChild);
+      } // 리스트가 없을떄
+
+
+      if (timerList.length === 0) {
+        var p = this.createElement("p");
+        p.textContent = "등록해주세요";
+        this.timerListElement.append(p);
+      } else {
+        // node 생성
+        timerList.forEach(function (timer) {
+          var id = timer.id,
+              title = timer.title,
+              time = timer.time;
+
+          var li = _this2.createElement("li");
+
+          li.id = id; // 타이틀
+
+          var p1 = _this2.createElement("p");
+
+          p1.textContent = title;
+
+          var span = _this2.createElement("span", "time-remain"); // 남은시간
+
+
+          var i = time;
+          var intervalId = setInterval(function () {
+            if (i === 0) {
+              clearInterval(intervalId);
+            }
+
+            console.log(i);
+            span.textContent = time;
+            i--;
+          }, 1000); // while (i !== 0) {
+          //   console.log(i);
+          //   span.textContent = time;
+          //   i--;
+          // }
+
+          var test = // 시간변경 nodes
+          p1.append(span);
+
+          var _this2$renderInnerNod = _this2.renderInnerNode(id),
+              deleteButton = _this2$renderInnerNod.deleteButton,
+              increseSelect = _this2$renderInnerNod.increseSelect,
+              increseButton = _this2$renderInnerNod.increseButton,
+              decreseSelect = _this2$renderInnerNod.decreseSelect,
+              decreseButton = _this2$renderInnerNod.decreseButton;
+
+          li.append(p1, increseSelect, increseButton, decreseSelect, decreseButton, deleteButton); // this.timerListElement의 자식 엘리먼트로 append
+
+          _this2.timerListElement.append(li);
+        });
+      } // debug TODO/
+
+
+      console.log(timerList);
+    }
+  }, {
+    key: "bindAddItem",
+    value: function bindAddItem(handler) {
+      var _this3 = this;
+
+      this.form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (_this3._timerInfo.title.trim().length <= 3) {
+          alert("3자이상 입력해 주세요");
+          return;
+        }
+
+        handler(_this3._timerInfo);
+
+        _this3._resetInput();
+      });
+    }
+  }, {
+    key: "bindDeleteTimerItem",
+    value: function bindDeleteTimerItem(handler) {
+      this.timerListElement.addEventListener("click", function (event) {
+        if (event.target.className === "delete-button") {
+          var id = parseInt(event.target.parentElement.id);
+          handler(id);
+        }
+      });
+    } // todo
+
+  }, {
+    key: "bindControlTime",
+    value: function bindControlTime(handler) {
+      var _this4 = this;
+
+      this.timerListElement.addEventListener("click", function (event) {
+        if (event.target.className === "time-control-btn") {
+          var parent = event.target.parentElement;
+          var id = parseInt(event.target.parentElement.id);
+          var type = event.target.name;
+
+          var select = _this4.getElement("#".concat(type, "-select-").concat(id));
+
+          var remainElem = parent.querySelector(".time-remain");
+          console.log(remainElem.textContent); // console.log(parent.id);
+          // remainElem.textContent =
+          //   type === "increse"
+          //     ? parseInt(remainElem.textContent) + timeConvert(select.value) + ""
+          //     : parseInt(remainElem.textContent) - timeConvert(select.value) + "";
+          // 셀렉트 옵션 value 는 버튼(time-control-btn)의 이름으로 찾아옴
+
+          console.log(type);
+          handler(id, select.value, type);
+        }
+      });
+    }
+  }, {
+    key: "_timerInfo",
+    get: function get() {
+      return {
+        title: this.input.value,
+        time: this.select.value
+      };
+    }
+  }]);
+
+  return View;
+}();
 
 
 
@@ -10567,6 +10797,7 @@ Timer.prototype.setTimeout = function (callback, time) {
   var self = this;
 
   if (this.timer) {
+    console.log("기존 타이머 해제", this.timer);
     clearTimeout(this.timer);
   }
 
@@ -10582,15 +10813,22 @@ Timer.prototype.setTimeout = function (callback, time) {
 
 Timer.prototype.increse = function (time) {
   if (!this.finished) {
-    // add time to time left
-    time = this.time - (Date.now() - this.start) + time;
-    this.setTimeout(this.callback, time);
+    var newTime = this.time - (Date.now() - this.start);
+
+    if (time === "double") {
+      newTime = this.time * 2 - (Date.now() - this.start);
+    } else if (time === "triple") {
+      newTime = this.time * 3 - (Date.now() - this.start);
+    } else {
+      newTime = newTime + time;
+    }
+
+    this.setTimeout(this.callback, newTime);
   }
 };
 
 Timer.prototype.decrese = function (time) {
   if (!this.finished) {
-    // add time to time left
     time = this.time - (Date.now() - this.start) - time;
     this.setTimeout(this.callback, time);
   }

@@ -1,5 +1,5 @@
-import { timeOptions } from '../js/common/const';
-
+import { timeOptions } from "../js/common/const";
+// https://github.com/priyath/todomvc
 // var timer = new Timer(function () {
 //   // init timer with 5 seconds
 //   alert('foo');
@@ -33,7 +33,7 @@ class Model {
     const item = {
       id,
       message: itemInfo.message,
-      time: itemInfo.time,
+      time: itemInfo.time
     };
 
     this.timerItems.push(item);
@@ -43,7 +43,7 @@ class Model {
   }
 
   editTodo(id, updatedText) {
-    this.timerItems = this.timerItems.map((todo) =>
+    this.timerItems = this.timerItems.map(todo =>
       todo.id === id
         ? { id: todo.id, text: updatedText, complete: todo.complete }
         : todo
@@ -53,13 +53,13 @@ class Model {
   }
 
   deleteTodo(id) {
-    this.timerItems = this.timerItems.filter((todo) => todo.id !== id);
+    this.timerItems = this.timerItems.filter(todo => todo.id !== id);
 
     this._commit(this.timerItems);
   }
 
   toggleTodo(id) {
-    this.timerItems = this.timerItems.map((todo) =>
+    this.timerItems = this.timerItems.map(todo =>
       todo.id === id
         ? { id: todo.id, text: todo.text, complete: !todo.complete }
         : todo
@@ -99,29 +99,29 @@ class Model {
  */
 class View {
   constructor() {
-    this.app = this.getElement('#root');
+    this.app = this.getElement("#root");
     // 등록 form
-    this.form = this.createElement('form');
+    this.form = this.createElement("form");
     // message 인풋
-    this.input = this.createElement('input');
-    this.input.type = 'text';
-    this.input.placeholder = 'Enter Message';
-    this.input.name = 'message';
+    this.input = this.createElement("input");
+    this.input.type = "text";
+    this.input.placeholder = "Enter Message";
+    this.input.name = "message";
     // 시간 select
-    this.select = this.createElement('select');
+    this.select = this.createElement("select");
     this.createOption(this.select, timeOptions);
     // 등록 버튼
-    this.submitButton = this.createElement('button');
-    this.submitButton.textContent = '추가';
+    this.submitButton = this.createElement("button");
+    this.submitButton.textContent = "추가";
     // 폼 렌더
     this.form.append(this.input, this.select, this.submitButton);
     // 앱 렌더
-    this.title = this.createElement('h1');
-    this.title.textContent = '펑리스트';
-    this.timerList = this.createElement('ul', 'timer-list');
+    this.title = this.createElement("h1");
+    this.title.textContent = "펑리스트";
+    this.timerList = this.createElement("ul", "timer-list");
     this.app.append(this.title, this.form, this.timerList);
 
-    this._temporaryTodoText = '';
+    this._temporaryTodoText = "";
     this._initLocalListeners();
   }
 
@@ -131,8 +131,8 @@ class View {
 
   // form 초기화
   _resetInput() {
-    this.input.value = '';
-    this.select.value = '3000';
+    this.input.value = "";
+    this.select.value = "3000";
   }
 
   // dom생성함수
@@ -145,7 +145,7 @@ class View {
   // 옵션생성함수
   createOption(target, options) {
     if (!options.length) return;
-    options.forEach((option) => {
+    options.forEach(option => {
       return target.options.add(new Option(option.title, option.value));
     });
   }
@@ -163,20 +163,20 @@ class View {
     }
     // 리스트 아이템이 없을떄
     if (items.length === 0) {
-      const p = this.createElement('p');
-      p.textContent = '등록해 주세요';
+      const p = this.createElement("p");
+      p.textContent = "등록해 주세요";
       this.timerList.append(p);
     } else {
       // 아이템 생성
-      console.log('들어와?');
+      console.log("들어와?");
       console.log(items);
-      items.forEach((info) => {
-        const li = this.createElement('li');
+      items.forEach(info => {
+        const li = this.createElement("li");
         li.id = info.id;
-        const span = this.createElement('span');
+        const span = this.createElement("span");
         span.textContent = info.message;
-        const deleteButton = this.createElement('button', 'delete');
-        deleteButton.textContent = 'Delete';
+        const deleteButton = this.createElement("button", "delete");
+        deleteButton.textContent = "Delete";
         li.append(span, deleteButton);
 
         // Append nodes
@@ -190,29 +190,29 @@ class View {
 
   // 내부 타이머 증가 / 감소 이벤트
   _initLocalListeners() {
-    this.timerList.addEventListener('input', (event) => {
-      if (event.target.className === 'editable') {
+    this.timerList.addEventListener("input", event => {
+      if (event.target.className === "editable") {
         this._temporaryTodoText = event.target.innerText;
       }
     });
   }
 
   bindAddItem(handler) {
-    this.form.addEventListener('submit', (event) => {
+    this.form.addEventListener("submit", event => {
       event.preventDefault();
-      console.log('this._itemInfos', this._itemInfos);
+      console.log("this._itemInfos", this._itemInfos);
       if (this._itemInfos.message.trim().length >= 3) {
         handler(this._itemInfos);
         this._resetInput();
       } else {
-        alert('최소 3글자 이상을 입력해주세요');
+        alert("최소 3글자 이상을 입력해주세요");
       }
     });
   }
 
   bindDeleteTodo(handler) {
-    this.timerList.addEventListener('click', (event) => {
-      if (event.target.className === 'delete') {
+    this.timerList.addEventListener("click", event => {
+      if (event.target.className === "delete") {
         const id = parseInt(event.target.parentElement.id);
 
         handler(id);
@@ -221,19 +221,19 @@ class View {
   }
 
   bindEditTodo(handler) {
-    this.timerList.addEventListener('focusout', (event) => {
+    this.timerList.addEventListener("focusout", event => {
       if (this._temporaryTodoText) {
         const id = parseInt(event.target.parentElement.id);
 
         handler(id, this._temporaryTodoText);
-        this._temporaryTodoText = '';
+        this._temporaryTodoText = "";
       }
     });
   }
 
   bindToggleTodo(handler) {
-    this.timerList.addEventListener('change', (event) => {
-      if (event.target.type === 'checkbox') {
+    this.timerList.addEventListener("change", event => {
+      if (event.target.type === "checkbox") {
         const id = parseInt(event.target.parentElement.id);
 
         handler(id);
@@ -241,8 +241,8 @@ class View {
     });
   }
   bindAddtime(handler) {
-    this.timerList.addEventListener('change', (event) => {
-      if (event.target.type === 'checkbox') {
+    this.timerList.addEventListener("change", event => {
+      if (event.target.type === "checkbox") {
         const id = parseInt(event.target.parentElement.id);
 
         handler(id);
@@ -275,11 +275,11 @@ class Controller {
     this.onTodoListChanged(this.model.timerItems);
   }
 
-  onTodoListChanged = (todos) => {
+  onTodoListChanged = todos => {
     this.view.displayItems(todos);
   };
 
-  handleAddTodo = (todoText) => {
+  handleAddTodo = todoText => {
     this.model.addTodo(todoText);
   };
 
@@ -287,11 +287,11 @@ class Controller {
     this.model.editTodo(id, todoText);
   };
 
-  handleDeleteTodo = (id) => {
+  handleDeleteTodo = id => {
     this.model.deleteTodo(id);
   };
 
-  handleToggleTodo = (id) => {
+  handleToggleTodo = id => {
     this.model.toggleTodo(id);
   };
 }
